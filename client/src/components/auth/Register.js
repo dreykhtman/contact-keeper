@@ -12,6 +12,7 @@ const Register = (props) => {
 
   useEffect(() => {
     if (isAuthenticated) {
+      // eslint-disable-next-line
       props.history.push('/');
     }
 

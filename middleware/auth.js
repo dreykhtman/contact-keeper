@@ -1,6 +1,8 @@
 /* eslint-disable consistent-return */
 const jwt = require('jsonwebtoken');
-const config = require('config');
+// const config = require('config');
+
+const jwtSecret = process.env.JWT_SECRET;
 
 module.exports = (req, res, next) => {
   // Get token from header
@@ -12,7 +14,7 @@ module.exports = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, config.get('jwtSecret'));
+    const decoded = jwt.verify(token, jwtSecret);
 
     req.user = decoded.user;
     next();

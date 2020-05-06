@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React, { useReducer } from 'react';
 import axios from 'axios';
 import ContactContext from './contactContext';
@@ -25,6 +26,12 @@ const ContactState = (props) => {
 
   const [state, dispatch] = useReducer(contactReducer, initialState);
 
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
   // Get contacts
   const getContacts = async () => {
     const res = await axios.get('/api/contacts');
@@ -38,16 +45,25 @@ const ContactState = (props) => {
 
   // Add contact
   const addContact = async (contact) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-
     try {
       const res = await axios.post('/api/contacts', contact, config);
 
       dispatch({ type: ADD_CONTACT, payload: res.data });
+    } catch (err) {
+      dispatch({ type: CONTACT_ERROR, payload: err.response.msg });
+    }
+  };
+
+  // Update contact
+  const updateContact = async (contact) => {
+    try {
+      const res = await axios.put(
+        `/api/contacts/${contact._id}`,
+        contact,
+        config
+      );
+
+      dispatch({ type: UPDATE_CONTACT, payload: res.data });
     } catch (err) {
       dispatch({ type: CONTACT_ERROR, payload: err.response.msg });
     }
@@ -77,11 +93,6 @@ const ContactState = (props) => {
   // Clear current contact
   const clearCurrent = () => {
     dispatch({ type: CLEAR_CURRENT });
-  };
-
-  // Update contact
-  const updateContact = (contact) => {
-    dispatch({ type: UPDATE_CONTACT, payload: contact });
   };
 
   // Filter contacts
